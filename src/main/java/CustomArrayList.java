@@ -57,7 +57,7 @@ public class CustomArrayList<T> implements CustomCollection<T> {
      * @throws IndexOutOfBoundsException Если получаемый индекс выходит за размер коллекции
      */
     private void checkInputIndex(int index) {
-        if (index < 0 && index >= size) {
+        if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Несуществующий индекс");
         }
     }
@@ -82,9 +82,9 @@ public class CustomArrayList<T> implements CustomCollection<T> {
     @Override
     public void remove(int index) {
         checkInputIndex(index);
-        System.arraycopy(array, index + 1, array, index, array.length - index);
-        array[size] = null;
+        System.arraycopy(array, index + 1, array, index, array.length - index- 1);
         size--;
+        array[size] = null;
     }
 
     /**
@@ -131,5 +131,15 @@ public class CustomArrayList<T> implements CustomCollection<T> {
         System.arraycopy(array, 0, arrayNew, 0, array.length);
 
         array = arrayNew;
+    }
+
+    /**
+     * Получить кол-во значений коллекции
+     *
+     * @return число объектов
+     */
+    @Override
+    public int size() {
+        return size;
     }
 }

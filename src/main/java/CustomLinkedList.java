@@ -50,12 +50,12 @@ public class CustomLinkedList<T> implements CustomCollection<T> {
     /**
      * Указатель на первый узел списка
      */
-    private Node<T> head;
+    private Node<T> first;
 
     /**
      * Указатель на последний узел списка
      */
-    private Node<T> tail;
+    private Node<T> end;
 
     /**
      * Размер коллекции
@@ -68,13 +68,13 @@ public class CustomLinkedList<T> implements CustomCollection<T> {
      * @param obj Сохраняемый объект
      */
     public void addFirst(T obj) {
-        final Node<T> oldHead = head;
-        final Node<T> newNode = new Node<>(null, obj, oldHead);
-        head = newNode;
-        if (oldHead == null)
-            tail = newNode;
+        final Node<T> oldFirst = first;
+        final Node<T> newNode = new Node<>(null, obj, oldFirst);
+        first = newNode;
+        if (oldFirst == null)
+            end = newNode;
         else
-            oldHead.prev = newNode;
+            oldFirst.prev = newNode;
         size++;
     }
 
@@ -84,10 +84,10 @@ public class CustomLinkedList<T> implements CustomCollection<T> {
      * @return Первый элемент коллекции
      */
     public T getFirst() {
-        final Node<T> curHead = head;
+        final Node<T> curHead = first;
         if (curHead == null)
             throw new NoSuchElementException();
-        return head.data;
+        return first.data;
     }
 
     /**
@@ -97,13 +97,13 @@ public class CustomLinkedList<T> implements CustomCollection<T> {
      */
     @Override
     public void add(T obj) {
-        final Node<T> oldTail = tail;
+        final Node<T> oldTail = end;
         final Node<T> newNode = new Node<>(oldTail, obj, null);
-        tail = newNode;
+        end = newNode;
         if (oldTail == null)
-            head = newNode;
+            first = newNode;
         else
-            oldTail.prev = newNode;
+            oldTail.next = newNode;
         size++;
     }
 
@@ -114,10 +114,10 @@ public class CustomLinkedList<T> implements CustomCollection<T> {
      * @throws NoSuchElementException Элементы в коллекции отсутствуют
      */
     public T getLast() {
-        final Node<T> curtail = tail;
+        final Node<T> curtail = end;
         if (curtail == null)
             throw new NoSuchElementException();
-        return tail.data;
+        return end.data;
     }
 
     /**
@@ -127,7 +127,7 @@ public class CustomLinkedList<T> implements CustomCollection<T> {
      * @throws IndexOutOfBoundsException Если получаемый индекс выходит за размер коллекции
      */
     private void checkInputIndex(int index) {
-        if (index < 0 && index >= size) {
+        if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Несуществующий индекс");
         }
     }
@@ -140,13 +140,13 @@ public class CustomLinkedList<T> implements CustomCollection<T> {
      */
     @Override
     public void add(int index, T obj) {
-        if (index == size) {
+        if (index == size - 1) {
             add(obj);
         } else if (index == 0) {
             addFirst(obj);
         } else {
             checkInputIndex(index);
-            Node<T> currentNode = head;
+            Node<T> currentNode = first;
             Node<T> nextNode = new Node<>();
 
             for (int i = 0; i < index - 1; i++) {
@@ -173,13 +173,13 @@ public class CustomLinkedList<T> implements CustomCollection<T> {
 
         if (index == 0) {
             return getFirst();
-        } else if (index == size) {
+        } else if (index == size - 1) {
             return getLast();
         }
 
-        Node<T> currentNode = head;
+        Node<T> currentNode = first;
         for (int i = 0; i < index; i++) {
-            currentNode = currentNode.prev;
+            currentNode = currentNode.next;
         }
 
         return currentNode.data;
@@ -195,16 +195,18 @@ public class CustomLinkedList<T> implements CustomCollection<T> {
         checkInputIndex(index);
 
         if (index == 0) {
-            head = head.next;
-            head.prev = null;
+            first = first.next;
+            first.prev = null;
             size--;
-        } else if (index == size) {
-            tail = tail.prev;
-            tail.next = null;
+            return;
+        } else if (index == size - 1) {
+            end = end.prev;
+            end.next = null;
             size--;
+            return;
         }
 
-        Node<T> currentNode = head;
+        Node<T> currentNode = first;
         for (int i = 0; i < index; i++) {
             currentNode = currentNode.next;
         }
@@ -220,8 +222,8 @@ public class CustomLinkedList<T> implements CustomCollection<T> {
      */
     @Override
     public void clear() {
-        head = null;
-        tail = null;
+        first = null;
+        end = null;
         size = 0;
     }
 
@@ -234,7 +236,7 @@ public class CustomLinkedList<T> implements CustomCollection<T> {
     @Override
     public void sorted() {
         T[] array = (T[]) new Object[size];
-        Node<T> currentNode = head;
+        Node<T> currentNode = first;
         for (int i = 0; i < size; i++) {
             if (currentNode.data == null) {
                 throw new RuntimeException("Для сортировки список не должен содержать null");
@@ -243,7 +245,7 @@ public class CustomLinkedList<T> implements CustomCollection<T> {
                 throw new IllegalArgumentException("Класс хранимых объектов должен реализовывать интерфейс Comparable");
             }
             array[i] = currentNode.data;
-            currentNode = currentNode.prev;
+            currentNode = currentNode.next;
         }
 
         Arrays.sort(array);
@@ -252,5 +254,15 @@ public class CustomLinkedList<T> implements CustomCollection<T> {
         for (T t : array) {
             add(t);
         }
+    }
+
+    /**
+     * Получить кол-во значений коллекции
+     *
+     * @return число объектов
+     */
+    @Override
+    public int size() {
+        return size;
     }
 }

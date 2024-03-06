@@ -38,4 +38,5 @@ public interface CustomCollection<T> {
      * Отсортировать коллекцию с помощью метода compareTo() интерфейса Comparable
      */
     void sorted();
+    int size();
 }
