@@ -82,7 +82,7 @@ public class CustomArrayList<T> implements CustomCollection<T> {
     @Override
     public void remove(int index) {
         checkInputIndex(index);
-        System.arraycopy(array, index + 1, array, index, array.length - index- 1);
+        System.arraycopy(array, index + 1, array, index, array.length - index - 1);
         size--;
         array[size] = null;
     }
